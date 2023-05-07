@@ -1,22 +1,21 @@
-package msgid
+package compress
 
 import (
 	"log"
 	"net/http"
 )
 
-type testMsgID struct {
+type testcompress struct {
 	Request     *http.Request
 	HandlerFunc http.HandlerFunc
 }
 
-var testMsgIDSuccess = testMsgID{
+var testcompressSuccess = testcompress{
 	Request: &http.Request{
 		Header: http.Header{},
 	},
 	HandlerFunc: http.HandlerFunc(func(rw http.ResponseWriter, req *http.Request) {
-		log.Printf("wr uuid -> %s", rw.Header().Get(KeyMsgID))
-		log.Printf("req uuid -> %s", req.Header.Get(KeyMsgID))
+		log.Printf("wr Content-Encoding -> %s", req.Header.Get("Content-Encoding"))
 	},
 	),
 }

@@ -17,9 +17,22 @@ func TestNew(t *testing.T) {
 		name       string
 		args       args
 		testMsgID  testMsgID
-		uuidValue  string
 		msgidValue string
-	}{}
+	}{
+		{
+			name: "success",
+			args: args{
+				Config: Config{
+					Name:  KeyMsgID,
+					Start: 0,
+					End:   0,
+					Algo:  nil,
+				},
+			},
+			testMsgID:  testMsgIDSuccess,
+			msgidValue: "",
+		},
+	}
 
 	for _, ti := range tests {
 		t.Run(ti.name, func(*testing.T) {
@@ -27,7 +40,7 @@ func TestNew(t *testing.T) {
 			h := New(ti.args.Config)
 			a := h(ti.testMsgID.HandlerFunc)
 			rec := httptest.NewRecorder()
-			ti.testMsgID.Request.Header.Set(KeyMsgUUID, ti.uuidValue)
+			ti.testMsgID.Request.Header.Set(KeyMsgID, ti.msgidValue)
 			a.ServeHTTP(rec, ti.testMsgID.Request)
 			resp := rec.Result()
 
@@ -36,4 +49,20 @@ func TestNew(t *testing.T) {
 			}
 		})
 	}
+}
+
+// go test -bench=. -benchtime=1s -benchmem
+func BenchmarkNew(b *testing.B) {
+	for n := 0; n < b.N; n++ {
+		New()
+	}
+	// b.StopTimer()
+}
+
+// go test -bench=. -benchtime=1s -benchmem
+func BenchmarkAlgoDefault(b *testing.B) {
+	for n := 0; n < b.N; n++ {
+		AlgoDefault(9000000, 10000000)
+	}
+	// b.StopTimer()
 }
